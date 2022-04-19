@@ -121,20 +121,24 @@ SELECT DescTemp
 FROM TempSkills CREATE SEQUENCE Skills_SkillId_seq2 AS integer;
 ALTER SEQUENCE Skills_SkillId_seq2 OWNED BY Skills.SkillId;
 update skills
-set SkillID = nextval('Skills_SkillId_seq2')
--- Populating HasSkills
--- Extracting RobberID and SkillID columns and adding them to HasSkills
-INSERT INTO HasSkills(RobberId,SkillId,Preference,Grade)
-SELECT r.RobberId,s.SkillId,ts.Preference,ts.Grade
-FROM TempSkills ts,Robbers r,Skills s
-WHERE r.Nickname=ts.RobberNameTemp AND s.Description=ts.DescTemp
--- Populating HasAccounts
--- Creating temporary table
-CREATE TABLE TempHasAccounts (
-RobberNameTemp CHAR(25) NOT NULL,
-BankName CHAR(30) NOT NULL,
-City CHAR(30) NOT NULL
-);
+set SkillID = nextval('Skills_SkillId_seq2') -- Populating HasSkills
+    -- Extracting RobberID and SkillID columns and adding them to HasSkills
+INSERT INTO HasSkills(RobberId, SkillId, Preference, Grade)
+SELECT r.RobberId,
+    s.SkillId,
+    ts.Preference,
+    ts.Grade
+FROM TempSkills ts,
+    Robbers r,
+    Skills s
+WHERE r.Nickname = ts.RobberNameTemp
+    AND s.Description = ts.DescTemp -- Populating HasAccounts
+    -- Creating temporary table
+    CREATE TABLE TempHasAccounts (
+        RobberNameTemp CHAR(25) NOT NULL,
+        BankName CHAR(30) NOT NULL,
+        City CHAR(30) NOT NULL
+    );
 -- Copying data into relation
-\copy TempHasAccounts(RobberNameTemp,BankName,City) FROM
-~/datafiles/hasaccounts_22.data
+\ copy TempHasAccounts(RobberNameTemp, BankName, City)
+FROM ~ / datafiles / hasaccounts_22.data
