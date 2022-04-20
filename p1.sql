@@ -13,9 +13,9 @@ ADD CONSTRAINT bankAccountNumConstraint CHECK(NoAccounts >= 0);
 -- Add bank security constraint
 ALTER TABLE Banks
 ADD CONSTRAINT bankSecConstraint CHECK(
-        Security = "excellent"
-        OR Security = "very good"
-        OR Security = "weak"
+        Security = 'excellent'
+        OR Security = 'very good'
+        OR Security = 'weak'
     );
 -- Table Robberies
 CREATE TABLE Robberies(
@@ -23,12 +23,11 @@ CREATE TABLE Robberies(
     City CHAR(30) NOT NULL,
     Date DATE NOT NULL,
     Amount int NOT NULL,
-    CONSTRAINT Robberies PK Primary Key (BankName, City, Date),
-    FOREIGN KEY (BankName, City),
-    REFERENCES Banks(BankName, City)
+    CONSTRAINT RobberiesPK Primary Key (BankName, City, Date),
+    FOREIGN KEY (BankName, City) REFERENCES Banks(BankName, City)
 );
 -- Amount should not be int
-ALTER TABLE Robberies;
+ALTER TABLE Robberies
 ALTER COLUMN Amount TYPE REAL;
 -- Table Plans
 CREATE TABLE Plans(
@@ -85,8 +84,7 @@ CREATE TABLE Accomplices (
 );
 -- Question 2
 -- Populating Banks
-\ copy Banks(BankName, City, NoAccounts, Security)
-FROM ~ / datafiles / banks_22.data -- Populating Robberies
+\copy Banks(BankName, City, NoAccounts, Security) FROM ~/datafiles/banks_22.data -- Populating Robberies
     \ copy Robberies(BankName, City, Date, Amount)
 FROM ~ / datafiles / robberies_22.data -- Populating Plans
     \ copy Plans(BankName, City, PlannedDate, NoRobbers)
@@ -119,20 +117,16 @@ FROM ~ / datafiles / hasskills_22.data -- Extracting the Description column and 
 INSERT INTO Skills(Description) -- Correcting to serial number by order
 SELECT DescTemp
 FROM TempSkills CREATE SEQUENCE Skills_SkillId_seq2 AS integer;
+CREATE SEQUENCE Skills_SkillId_seq2 AS integer;
 ALTER SEQUENCE Skills_SkillId_seq2 OWNED BY Skills.SkillId;
 update skills
-set SkillID = nextval('Skills_SkillId_seq2') -- Populating HasSkills
+set SkillID = nextval('Skills_SkillId_seq2') 
+-- Populating HasSkills
     -- Extracting RobberID and SkillID columns and adding them to HasSkills
-INSERT INTO HasSkills(RobberId, SkillId, Preference, Grade)
-SELECT r.RobberId,
-    s.SkillId,
-    ts.Preference,
-    ts.Grade
-FROM TempSkills ts,
-    Robbers r,
-    Skills s
-WHERE r.Nickname = ts.RobberNameTemp
-    AND s.Description = ts.DescTemp -- Populating HasAccounts
+INSERT INTO HasSkills(RobberId,SkillId,Preference,Grade)
+SELECT r.RobberId,s.SkillId,ts.Preference,ts.Grade
+FROM TempSkills ts,Robbers r,Skills s
+WHERE r.Nickname=ts.RobberNameTemp AND s.Description=ts.DescTemp -- Populating HasAccounts
     -- Creating temporary table
     CREATE TABLE TempHasAccounts (
         RobberNameTemp CHAR(25) NOT NULL,
@@ -140,5 +134,12 @@ WHERE r.Nickname = ts.RobberNameTemp
         City CHAR(30) NOT NULL
     );
 -- Copying data into relation
-\ copy TempHasAccounts(RobberNameTemp, BankName, City)
-FROM ~ / datafiles / hasaccounts_22.data
+
+-- THIS IS WHERE I'M UP TO
+
+\copy TempHasAccounts(RobberNameTemp, BankName, City) FROM ~/Documents/datafiles/hasaccounts_22.data
+-- Extracting RobberID column and putting into HasAccounts table
+INSERT INTO TempHasAccounts(RobberId,BankName,City)
+SELECT r.RobberId,ta.BankName,ta.City
+FROM TempAccounts ta,Robbers r
+WHERE r.Nickname=ta.RobberNameTemp
