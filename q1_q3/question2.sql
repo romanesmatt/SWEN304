@@ -51,8 +51,6 @@ WHERE r.Nickname=ts.RobberNameTemp AND s.Description=ts.DescTemp -- Populating H
     );
 -- Copying data into relation
 
--- THIS IS WHERE I'M UP TO
-
 \copy TempHasAccounts(RobberNameTemp, BankName, City) FROM ~/Documents/datafiles/hasaccounts_22.data
 -- Extracting RobberID column and putting into HasAccounts table
 INSERT INTO HasAccounts(RobberId,BankName,City)
@@ -74,7 +72,7 @@ INSERT INTO Accomplices(RobberId,BankName,City,Date,Share)
 SELECT r.RobberId,ta.BankName,ta.City,ta.DateTemp,ta.Share
 FROM TempAccomplices ta,Robbers r
 WHERE r.Nickname=ta.RobberNameTemp
-
+-- Dropping temporary tables
 DROP TABLE TempSkills
 DROP TABLE HasAccounts
 DROP TABLE TempAccomplices

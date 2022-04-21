@@ -15,6 +15,7 @@ ALTER TABLE Banks
 ADD CONSTRAINT bankSecConstraint CHECK(
         Security = 'excellent'
         OR Security = 'very good'
+        OR Security = 'good'
         OR Security = 'weak'
     );
 -- Table Robberies
