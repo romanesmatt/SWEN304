@@ -74,5 +74,5 @@ FROM TempAccomplices ta,Robbers r
 WHERE r.Nickname=ta.RobberNameTemp
 -- Dropping temporary tables
 DROP TABLE TempSkills
-DROP TABLE HasAccounts
+DROP TABLE TempHasAccounts
 DROP TABLE TempAccomplices
