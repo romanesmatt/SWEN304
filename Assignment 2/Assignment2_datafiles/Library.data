@@ -1,0 +1,238 @@
+--
+-- PostgreSQL database dump
+--
+
+SET client_encoding = 'SQL_ASCII';
+SET check_function_bodies = false;
+SET client_min_messages = warning;
+
+--
+-- Name: SCHEMA public; Type: COMMENT; Schema: -; Owner: pgsql
+--
+
+
+SET search_path = public, pg_catalog;
+
+
+
+SET default_tablespace = '';
+
+SET default_with_oids = true;
+
+
+CREATE TABLE author (
+    authorid integer DEFAULT 0 NOT NULL,
+    name character(15),
+    surname character(15) NOT NULL,
+    CONSTRAINT author_authorid_check CHECK ((authorid >= 0))
+);
+
+
+CREATE TABLE book (
+    isbn integer DEFAULT 0 NOT NULL,
+    title character(60) NOT NULL,
+    edition_no smallint DEFAULT 1 NOT NULL,
+    CONSTRAINT book_edition_no_check CHECK ((edition_no > 0)),
+    CONSTRAINT book_isbn_check CHECK (((isbn >= 0) AND (isbn <= 9999)))
+);
+
+
+CREATE TABLE book_author (
+    isbn integer DEFAULT 0 NOT NULL,
+    authorid integer DEFAULT 0 NOT NULL,
+    authorseqno smallint DEFAULT 1,
+    edition_no smallint DEFAULT 1 NOT NULL,
+    CONSTRAINT bac CHECK ((edition_no > 0)),
+    CONSTRAINT book_author_authorid_check CHECK ((authorid >= 0)),
+    CONSTRAINT book_author_authorseqno_check CHECK ((authorseqno > 0)),
+    CONSTRAINT book_author_isbn_check CHECK (((isbn >= 0) AND (isbn <= 9999)))
+);
+
+
+CREATE TABLE customer (
+    customerid integer DEFAULT 0 NOT NULL,
+    l_name character(15) NOT NULL,
+    f_name character(15),
+    city character(15) DEFAULT 'Wellington'::bpchar,
+    CONSTRAINT customer_city_check CHECK ((((city = 'Wellington'::bpchar) OR (city = 'Upper Hutt'::bpchar)) OR (city = 'Lower Hutt'::bpchar))),
+    CONSTRAINT customer_customerid_check CHECK ((customerid >= 0))
+);
+
+
+CREATE TABLE loaned_book (
+    customerid integer DEFAULT 0 NOT NULL,
+    duedate date,
+    isbn integer DEFAULT 0 NOT NULL,
+    edition_no smallint DEFAULT 1 NOT NULL,
+    CONSTRAINT lbc CHECK ((edition_no > 0)),
+    CONSTRAINT loaned_book_customerid_check CHECK ((customerid >= 0)),
+    CONSTRAINT loaned_book_isbn_check CHECK (((isbn >= 0) AND (isbn <= 9999)))
+);
+
+
+
+COPY author (authorid, name, surname) FROM stdin;
+0	Default Name   	Default Surname
+2	Pavle          	Mogin          
+3	Ramez          	Elmasri        
+4	Shamkant       	Navathe        
+5	Ivan           	Lukovic        
+6	Miro           	Govedarica     
+7	Michael        	Stonebraker    
+8	Donald         	Moore          
+9	William        	Inmon          
+1	Toby           	Teorey         
+22	Peter          	Andreae        
+10	Donald         	Ullman         
+11	Elliot         	Koffman        
+12	Ursula         	Woltz          
+13	Raghu          	Ramakrishnan   
+14	Johannes       	Gehrke         
+15	Cris           	Date           
+16	Hugh           	Darwen         
+\.
+
+
+
+COPY book (isbn, title, edition_no) FROM stdin;
+9009	Problem solving with Java                                   	2
+1928	Database Management Systems                                 	3
+1010	Data Models                                                 	1
+2222	Database Principles                                         	1
+8888	Building the Data Warehouse                                 	1
+1001	Database Modeling & Design                                  	1
+1111	Fundamentals of Database Systems                            	3
+4444	Principles of Database Systems                              	2
+5555	Object_Relational DBMSs: The Next Great Wave                	1
+5005	Foundation for Object_Relational Databases                  	1
+6666	Principles of Database Design                               	1
+0	Default Book Name                                           	1
+6666	Principles of Database Design                               	2
+3333	Principles of Database and Knowledge-Base Systems           	1
+\.
+
+
+
+COPY book_author (isbn, authorid, authorseqno, edition_no) FROM stdin;
+2222	5	2	1
+1111	4	2	3
+1111	3	1	3
+2222	2	1	1
+5555	8	2	1
+5555	7	1	1
+8888	9	1	1
+1001	1	1	1
+9009	11	1	2
+9009	12	2	2
+3333	10	1	1
+4444	10	1	2
+1928	14	2	3
+1928	13	1	3
+5005	15	1	1
+5005	16	2	1
+0	7	1	1
+6666	2	1	1
+6666	5	2	1
+6666	6	3	1
+\.
+
+
+COPY customer (customerid, l_name, f_name, city) FROM stdin;
+0	Default        	Customer       	\N
+2	Leow           	May-N          	Wellington     
+3	Andreae        	Peter          	Lower Hutt     
+4	Noble          	James          	Upper Hutt     
+5	Tempero        	Ewan           	Upper Hutt     
+6	Anderson       	Svend          	Lower Hutt     
+7	Nickson        	Ray            	Upper Hutt     
+8	Dobbie         	Gill           	Upper Hutt     
+9	Martin         	Paul           	Wellington     
+10	Barmouta       	Alex           	Upper Hutt     
+11	Xu             	Gang           	Lower Hutt     
+12	McMurray       	Linda          	Wellington     
+13	Somerfield     	Nigel          	Wellington     
+14	Anslow         	Craig          	Wellington     
+15	Gandhi         	Amit           	Upper Hutt     
+16	Yi             	Shusen         	Lower Hutt     
+17	Zhou           	Daisy          	Lower Hutt     
+18	Chui           	Chang          	Wellington     
+19	Dolman         	Jerome         	Wellington     
+20	Wojnar         	Maciej         	Upper Hutt     
+21	Wayne          	Thomson        	Wellington     
+22	Pierce         	David          	Wellington     
+1	Jackson        	Kirk           	Wellington     
+\.
+
+
+COPY loaned_book (customerid, duedate, isbn, edition_no) FROM stdin;
+1	2005-01-25	1928	3
+2	2005-01-25	1928	3
+3	2005-02-25	1928	3
+4	2005-02-25	1928	3
+5	2005-03-25	1928	3
+2	2005-03-25	5555	1
+16	2005-04-25	1928	3
+21	2005-09-25	8888	1
+21	2005-10-25	1111	3
+21	2006-01-20	5005	1
+2	2005-02-21	5005	1
+3	2005-02-22	5005	1
+4	2005-02-23	5005	1
+5	2005-02-25	5005	1
+11	2005-03-21	5005	1
+12	2005-03-22	5005	1
+13	2005-04-23	5005	1
+14	2005-05-25	5005	1
+0	2005-04-08	1111	3
+3	2005-03-25	6666	1
+2	2005-03-25	6666	1
+17	2005-05-25	6666	1
+18	2005-06-25	6666	1
+19	2005-07-25	6666	1
+21	2005-08-25	6666	1
+21	2006-04-06	1928	3
+\.
+
+
+
+ALTER TABLE ONLY author
+    ADD CONSTRAINT author_pkey PRIMARY KEY (authorid);
+
+
+
+ALTER TABLE ONLY book_author
+    ADD CONSTRAINT book_author_pkey PRIMARY KEY (isbn, edition_no, authorid);
+
+
+ALTER TABLE ONLY book
+    ADD CONSTRAINT book_pkey PRIMARY KEY (isbn, edition_no);
+
+
+ALTER TABLE ONLY customer
+    ADD CONSTRAINT customer_pkey PRIMARY KEY (customerid);
+
+
+ALTER TABLE ONLY loaned_book
+    ADD CONSTRAINT loaned_book_pkey PRIMARY KEY (isbn, edition_no, customerid);
+
+ALTER TABLE ONLY book_author
+    ADD CONSTRAINT b_a_ra FOREIGN KEY (authorid) REFERENCES author(authorid) ON UPDATE CASCADE ON DELETE SET DEFAULT;
+
+ALTER TABLE ONLY book_author
+    ADD CONSTRAINT ba_rb FOREIGN KEY (isbn, edition_no) REFERENCES book(isbn, edition_no) ON UPDATE CASCADE ON DELETE SET DEFAULT;
+
+
+ALTER TABLE ONLY loaned_book
+    ADD CONSTRAINT l_b_rc FOREIGN KEY (customerid) REFERENCES customer(customerid) ON UPDATE RESTRICT ON DELETE RESTRICT;
+
+
+
+ALTER TABLE ONLY loaned_book
+    ADD CONSTRAINT lb_rb FOREIGN KEY (isbn, edition_no) REFERENCES book(isbn, edition_no) ON UPDATE CASCADE ON DELETE RESTRICT;
+
+
+
+--
+-- PostgreSQL database dump complete
+--
+

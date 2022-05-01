@@ -1,0 +1,78 @@
+VAR Musician REAL RELATION
+{
+MusicianId INTEGER,
+Mus_Name CHAR,
+Telephone CHAR,
+Mus_Type CHAR
+} KEY {MusicianId};
+
+INSERT Musician RELATION
+{
+TUPLE {MusicianId 1001, Mus_Name "James", Telephone "04-526-888", Mus_Type "Instrument Player"}
+};
+INSERT Musician RELATION
+{
+TUPLE {MusicianId 2002, Mus_Name "Net", Telephone "06-977-818", Mus_Type "Singer"},
+TUPLE {MusicianId 3003, Mus_Name "Doris", Telephone "06-333-918", Mus_Type "Singer"},
+TUPLE {MusicianId 4004, Mus_Name "Meliza", Telephone "05-977-118", Mus_Type "Singer"},
+TUPLE {MusicianId 5005, Mus_Name "Peter", Telephone "04-463-777", Mus_Type "Instrument Player"},
+TUPLE {MusicianId 6006, Mus_Name "James", Telephone "06-111-111", Mus_Type "Instrument Player"},
+TUPLE {MusicianId 7007, Mus_Name "Rod", Telephone "06-977-999", Mus_Type "Instrument Player"},
+TUPLE {MusicianId 8008, Mus_Name "Matt", Telephone "04-463-555", Mus_Type "Instrument Player"},
+TUPLE {MusicianId 9009, Mus_Name "John", Telephone "04-463-797", Mus_Type "Conductor"},
+TUPLE {MusicianId 1111, Mus_Name "Milica", Telephone "04-977-000", Mus_Type "Singer"},
+TUPLE {MusicianId 1221, Mus_Name "Daniela", Telephone "Not Applicable", Mus_Type "Singer"}
+};
+
+
+VAR Instrument REAL RELATION
+{
+InstrumentId INTEGER,
+Inst_Name CHAR,
+Mus_Key CHAR
+} KEY {InstrumentId};
+
+INSERT Instrument RELATION
+{
+TUPLE {InstrumentId 101, Inst_Name "Trumpet", Mus_Key "Tremble Clef"}
+};
+INSERT Instrument RELATION
+{
+TUPLE {InstrumentId 111, Inst_Name "Violin", Mus_Key "Tremble Clef"},
+TUPLE {InstrumentId 121, Inst_Name "Guitar", Mus_Key "Tremble Clef"},
+TUPLE {InstrumentId 131, Inst_Name "Piano", Mus_Key "Tremble and Bass Clef"},
+TUPLE {InstrumentId 141, Inst_Name "Drum", Mus_Key "Bass Clef"},
+TUPLE {InstrumentId 151, Inst_Name "Saxophone", Mus_Key "Bass Clef"},
+TUPLE {InstrumentId 161, Inst_Name "Chello", Mus_Key "Alto Clef"},
+TUPLE {InstrumentId 171, Inst_Name "Trombone", Mus_Key "Bass Clef"},
+TUPLE {InstrumentId 181, Inst_Name "Organ", Mus_Key "Tremble and Bass Clef"}
+};
+
+
+VAR Played_By REAL RELATION
+{
+InstrumentId INTEGER,
+MusicianId INTEGER
+} KEY {InstrumentId, MusicianId};
+
+CONSTRAINT Played_Mus_FK
+(Played_By {MusicianId} <= Musician {MusicianId});
+
+CONSTRAINT Played_Inst_FK
+(Played_By {InstrumentId} <= Instrument {InstrumentId});
+
+INSERT Played_By RELATION
+{
+TUPLE {InstrumentId 101, MusicianId 1001},
+TUPLE {InstrumentId 111, MusicianId 5005},
+TUPLE {InstrumentId 111, MusicianId 6006},
+TUPLE {InstrumentId 111, MusicianId 7007},
+TUPLE {InstrumentId 121, MusicianId 2002},
+TUPLE {InstrumentId 121, MusicianId 3003},
+TUPLE {InstrumentId 121, MusicianId 4004},
+TUPLE {InstrumentId 131, MusicianId 2002},
+TUPLE {InstrumentId 131, MusicianId 4004},
+TUPLE {InstrumentId 131, MusicianId 8008},
+TUPLE {InstrumentId 131, MusicianId 3003},
+TUPLE {InstrumentId 151, MusicianId 1001}
+};
