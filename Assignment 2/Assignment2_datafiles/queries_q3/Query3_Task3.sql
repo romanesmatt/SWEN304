@@ -43,3 +43,19 @@ from (
     -- Number of tuples shown: 15
 
     -- Final solution
+                        select clb.f_name,
+    clb.l_name,
+    noofbooks
+from (
+        select f_name,
+            l_name,
+            count(*) as noofbooks
+        from customer
+            natural join loaned_book
+        group by f_name,
+            l_name
+    ) as clb
+    
+    where noofbooks >= 3
+    order by noofbooks desc; -- Cost: 4.15
+    -- Number of tuples shown: 3
